@@ -1,5 +1,7 @@
+const dayjs = require('dayjs')
 const express = require('express')
 const router = express.Router()
+const striptags = require('striptags')
 const firebaseAdminDb = require('../connection/firebase-admin')
 
 const categoriesRef = firebaseAdminDb.ref('categories')
@@ -31,7 +33,28 @@ router.get('/article/:id', function (req, res, next) {
 })
 
 router.get('/archives', function (req, res, next) {
-  res.render('dashboard/archives', { title: 'Express' })
+  const id = req.params.id
+  let categories = {}
+  let article = []
+  categoriesRef // 使用 promise 而非 callback
+    .once('value')
+    .then((snapshot) => {
+      categories = snapshot.val()
+      return articlesRef.orderByChild('update_time').once('value')
+    })
+    .then((snapshot) => {
+      snapshot.forEach((child) => {
+        article.push(child.val())
+      })
+      article.reverse()
+      res.render('dashboard/archives', {
+        title: 'Express',
+        categories,
+        article,
+        dayjs,
+        striptags,
+      })
+    })
 })
 
 router.get('/categories', function (req, res, next) {

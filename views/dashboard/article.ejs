@@ -1,7 +1,7 @@
-<% extend('../layouts/dashboard-layout') %> <% if (!article) { %> const article
-= {} <% } %>
+<% extend('../layouts/dashboard-layout') %> <% if (!article) { var article ={} }
+%>
 
-<form <% if (article.id) { %>
+<form <% if (article?.id) { %>
   action="/dashboard/article/update/<%=article.id%>" <% } else {%>
   action="/dashboard/article/create" <% } %>method="POST" class="row
   justify-content-center" >
