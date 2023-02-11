@@ -1,24 +1,35 @@
-var createError = require('http-errors')
-var express = require('express')
-var path = require('path')
-var cookieParser = require('cookie-parser')
-var logger = require('morgan')
+const path = require('path')
+const flash = require('connect-flash')
+const logger = require('morgan')
+const express = require('express')
+const session = require('express-session')
+const createError = require('http-errors')
+const cookieParser = require('cookie-parser')
 
-var indexRouter = require('./routes/index')
-var dashboardRouter = require('./routes/dashboard')
+const indexRouter = require('./routes/index')
+const dashboardRouter = require('./routes/dashboard')
 
-var app = express()
+const app = express()
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
 app.engine('ejs', require('express-ejs-extend'))
 app.set('view engine', 'ejs')
 
+app.use(flash())
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
+app.use(
+  session({
+    secret: 'wakanda',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 60000 },
+  })
+)
 
 app.use('/', indexRouter)
 app.use('/dashboard', dashboardRouter)
