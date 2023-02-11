@@ -33,6 +33,7 @@ router.get('/article/:id', function (req, res, next) {
 })
 
 router.get('/archives', function (req, res, next) {
+  const status = req.query.status || 'public'
   const id = req.params.id
   let categories = {}
   let article = []
@@ -44,15 +45,18 @@ router.get('/archives', function (req, res, next) {
     })
     .then((snapshot) => {
       snapshot.forEach((child) => {
-        article.push(child.val())
+        if (status === child.val().status) {
+          article.push(child.val())
+        }
       })
       article.reverse()
       res.render('dashboard/archives', {
-        title: 'Express',
-        categories,
-        article,
+        title: '文章列表',
         dayjs,
+        status,
+        article,
         striptags,
+        categories,
       })
     })
 })
@@ -131,6 +135,14 @@ router.post('/article/update/:id', function (req, res, next) {
     .then(() => {
       res.redirect(`/dashboard/article/${id}`)
     })
+})
+
+router.post('/article/delete/:id', (req, res) => {
+  const id = req.params.id
+  articlesRef.child(id).remove()
+  req.flash('info', '已刪除文章')
+  res.send({ message: '成功刪除文章' })
+  res.end()
 })
 
 router.get('/signup', function (req, res, next) {
