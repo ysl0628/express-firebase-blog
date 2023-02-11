@@ -3,13 +3,31 @@ const router = express.Router()
 const firebaseAdminDb = require('../connection/firebase-admin')
 
 const categoriesRef = firebaseAdminDb.ref('categories')
+const articlesRef = firebaseAdminDb.ref('articles')
 
-/* GET users listing. */
+/* GET article/create listing. */
 router.get('/article/create', function (req, res, next) {
   categoriesRef.once('value', (snapshot) => {
     const categories = snapshot.val()
     res.render('dashboard/article', { title: 'Express', categories })
   })
+})
+
+/*  */
+router.get('/article/:id', function (req, res, next) {
+  const id = req.params.id
+  let categories = {}
+  categoriesRef // 使用 promise 而非 callback
+    .once('value')
+    .then((snapshot) => {
+      categories = snapshot.val()
+      return articlesRef.child(id).once('value')
+    })
+    .then((snapshot) => {
+      const article = snapshot.val()
+      console.log('article', article)
+      res.render('dashboard/article', { title: 'Express', categories, article })
+    })
 })
 
 router.get('/archives', function (req, res, next) {
@@ -19,7 +37,6 @@ router.get('/archives', function (req, res, next) {
 router.get('/categories', function (req, res, next) {
   const messages = req.flash('info')
   const errorMessages = req.flash('error')
-  console.log(messages)
   categoriesRef.once('value', (snapshot) => {
     const categories = snapshot.val()
     res.render('dashboard/categories', {
@@ -61,6 +78,36 @@ router.post('/categories/delete/:id', (req, res) => {
   categoriesRef.child(id).remove()
   req.flash('info', '已刪除分類')
   res.redirect('/dashboard/categories')
+})
+
+router.post('/article/create', function (req, res, next) {
+  const data = req.body
+  const articleRef = articlesRef.push()
+  const key = articleRef.key
+  const article = {
+    ...data,
+    id: key,
+    update_time: Date.now().valueOf(),
+  }
+  articleRef.set(article).then(() => {
+    res.redirect(`/dashboard/article/${key}`)
+  })
+})
+
+router.post('/article/update/:id', function (req, res, next) {
+  const data = req.body
+  const id = req.params.id
+  const article = {
+    ...data,
+    update_time: Date.now().valueOf(),
+  }
+  console.log(article)
+  articlesRef
+    .child(id)
+    .update(article)
+    .then(() => {
+      res.redirect(`/dashboard/article/${id}`)
+    })
 })
 
 router.get('/signup', function (req, res, next) {
