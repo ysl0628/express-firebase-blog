@@ -5,8 +5,11 @@ const firebaseAdminDb = require('../connection/firebase-admin')
 const categoriesRef = firebaseAdminDb.ref('categories')
 
 /* GET users listing. */
-router.get('/article', function (req, res, next) {
-  res.render('dashboard/article', { title: 'Express' })
+router.get('/article/create', function (req, res, next) {
+  categoriesRef.once('value', (snapshot) => {
+    const categories = snapshot.val()
+    res.render('dashboard/article', { title: 'Express', categories })
+  })
 })
 
 router.get('/archives', function (req, res, next) {
