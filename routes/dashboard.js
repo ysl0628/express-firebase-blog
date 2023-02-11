@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const firebaseAdminDb = require('../connection/firebase-admin')
 
-const categoriesRef = firebaseAdminDb.ref('/categories/')
+const categoriesRef = firebaseAdminDb.ref('categories')
 
 /* GET users listing. */
 router.get('/article', function (req, res, next) {
@@ -21,6 +21,13 @@ router.post('/categories/create', (req, res) => {
   const data = req.body
   const categoryRef = categoriesRef.push()
   const key = categoryRef.key
+  const category = {
+    ...data,
+    id: key,
+  }
+  categoryRef.set(category).then(() => {
+    res.redirect('/dashboard/categories')
+  })
 })
 
 router.get('/signup', function (req, res, next) {
