@@ -2,6 +2,14 @@
 
 <div class="row justify-content-center">
   <div class="col-md-6">
+    <% if (hasInfo) { %> <% for( const item in messages ) { %>
+    <div class="alert alert-warning" role="alert"><%= messages[item] %></div>
+    <% } %> <% } %> <% if (hasInfo) { %> <% for( const item in errorMessages ) {
+    %>
+    <div class="alert alert-danger" role="alert">
+      <%= errorMessages[item] %>
+    </div>
+    <% } %> <% } %>
     <table class="table">
       <thead>
         <tr>
@@ -11,23 +19,25 @@
         </tr>
       </thead>
       <tbody>
+        <% for( const item in categories ) { %>
         <tr>
-          <td class="align-middle">心得</td>
+          <td class="align-middle"><%= categories[item].name %></td>
           <td>
             <input
               type="text"
               class="form-control form-control-sm"
-              value="mind"
+              value="<%= categories[item].path %>"
             />
           </td>
           <td class="align-middle">
-            <form method="POST">
+            <form action="/dashboard/categories/delete/<%=item%>" method="POST">
               <button type="submit" class="btn btn-outline-danger btn-sm">
                 刪除
               </button>
             </form>
           </td>
         </tr>
+        <% } %>
       </tbody>
     </table>
 
