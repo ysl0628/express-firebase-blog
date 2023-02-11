@@ -4,7 +4,7 @@ const firebaseAdminDb = require('../connection/firebase-admin')
 
 const dataRef = firebaseAdminDb.ref()
 dataRef.once('value', (snapshot) => {
-  console.log(snapshot.val())
+  // console.log(snapshot.val())
 })
 
 /* GET home page. */
@@ -14,22 +14,6 @@ router.get('/', function (req, res, next) {
 
 router.get('/post', function (req, res, next) {
   res.render('post', { title: 'Express' })
-})
-
-router.get('/dashboard/article', function (req, res, next) {
-  res.render('dashboard/article', { title: 'Express' })
-})
-
-router.get('/dashboard/archives', function (req, res, next) {
-  res.render('dashboard/archives', { title: 'Express' })
-})
-
-router.get('/dashboard/categories', function (req, res, next) {
-  res.render('dashboard/categories', { title: 'Express' })
-})
-
-router.get('/dashboard/signup', function (req, res, next) {
-  res.render('dashboard/signup', { title: 'Express' })
 })
 
 module.exports = router
