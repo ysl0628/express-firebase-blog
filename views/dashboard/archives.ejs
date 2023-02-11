@@ -3,10 +3,16 @@
 <div class="row justify-content-center">
   <div class="col-md-6">
     <div class="btn-group w-100">
-      <a href="#" class="btn btn-outline-secondary w-100 rounded-0 active"
+      <a
+        href="/dashboard/archives/?status=public"
+        class="btn btn-outline-secondary w-100 rounded-0 <%= status==='public' && 'active' %>"
         >已發佈</a
       >
-      <a href="#" class="btn btn-outline-secondary w-100 rounded-0">草稿</a>
+      <a
+        href="/dashboard/archives/?status=draft"
+        class="btn btn-outline-secondary w-100 rounded-0 <%= status==='draft' && 'active' %>"
+        >草稿</a
+      >
       <a href="/dashboard/article/create" class="btn btn-primary">新增文章</a>
     </div>
     <% for( item in article ) { %>
@@ -25,6 +31,7 @@
         <a
           href="#"
           class="btn btn-outline-danger rounded-0 deletePost"
+          id="deleteBtn"
           data-id="<%= article[item].id %>"
           data-title="<%= article[item].title %>"
           >刪除</a
@@ -66,3 +73,21 @@
     </li>
   </ul>
 </nav>
+
+<script>
+  const deleteBtn = document.getElementById('deleteBtn')
+  deleteBtn.addEventListener('click', async (e) => {
+    e.preventDefault()
+    const id = e.target.dataset.id
+    const title = e.target.dataset.title
+    if (confirm(`即將刪除 ${title}`)) {
+      const res = await fetch(`/dashboard/article/delete/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      const result = await res.json()
+      console.log(result.message)
+      window.location = '/dashboard/archives'
+    }
+  })
+</script>
