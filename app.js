@@ -5,11 +5,15 @@ const express = require('express')
 const session = require('express-session')
 const createError = require('http-errors')
 const cookieParser = require('cookie-parser')
+const firebaseAdminDb = require('./connection/firebase-admin')
+
 require('dotenv').config()
 
 const authRouter = require('./routes/auth')
 const indexRouter = require('./routes/index')
 const dashboardRouter = require('./routes/dashboard')
+
+const categoriesRef = firebaseAdminDb.ref('categories')
 
 const app = express()
 
@@ -35,6 +39,9 @@ app.use(
 // 以 middleware 檢查是否登入
 const globalLocals = (req, res, next) => {
   res.locals.user = req.session.uid || null
+  categoriesRef.once('value', (snapshot) => {
+    res.locals.categories = snapshot.val()
+  })
   next()
 }
 

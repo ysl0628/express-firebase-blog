@@ -61,6 +61,34 @@ router.get('/post/:id', function (req, res, next) {
     })
 })
 
+router.get('/archives/:id', function (req, res, next) {
+  const id = req.params.id
+  const currentPage = req.query.page || 1
+  let categories = {}
+  categoriesRef // 使用 promise 而非 callback
+    .once('value')
+    .then((snapshot) => {
+      categories = snapshot.val()
+      return articlesRef.orderByChild('category').equalTo(id).once('value')
+    })
+    .then((snapshot) => {
+      let articles = []
+      snapshot.forEach((child) => {
+        articles.push(child.val())
+      })
+      articles.reverse()
+      const { data, pagination } = convertPagination(articles, currentPage)
+      res.render('archives', {
+        title: '文章',
+        dayjs,
+        articles: data,
+        striptags,
+        pagination,
+        categories,
+      })
+    })
+})
+
 router.get('/post', function (req, res, next) {
   res.render('post', { title: 'Express' })
 })

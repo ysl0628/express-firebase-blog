@@ -1,0 +1,32 @@
+<% extend('./layouts/layout') %>
+
+<div class="row my-4 justify-content-center">
+  <div class="col-md-9">
+    <% if (articles.length>0) { %> <% for (const item in articles) {%>
+    <div class="card mb-3">
+      <div class="card-body">
+        <a href="/post/<%= articles[item].id %>">
+          <h2 class="text-primary"><%= articles[item].title %></h2></a
+        >
+        <div class="d-flex flex-row text-secondary small">
+          <div class="p-2">
+            <span class="fa fa-clock-o"></span> <%-
+            dayjs(articles[item].update_time).format('YYYY/MM/DD') %>
+          </div>
+          <div class="p-2">
+            <i class="fa fa-tag" aria-hidden="true"></i>
+            <a href="#" class="text-info">
+              <%- categories[articles[item].category]?.name || '' %>
+            </a>
+          </div>
+        </div>
+        <div><%- striptags(articles[item].content).slice(0,150) %>.....</div>
+      </div>
+    </div>
+    <% } %> <% } else { %>
+    <div class="alert alert-warning text-center">此分類尚無文章</div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('utils/pagination') %>

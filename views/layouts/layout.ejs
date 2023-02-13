@@ -53,7 +53,13 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav ml-auto">
-        <a class="nav-item nav-link" href="/archives/-L2TajOWL1ycB_hwyiK-"
+        <% for( let item in categories ) { %>
+        <a class="nav-item nav-link" href="/archives/<%= item %>"
+          ><%= categories[item].name %>
+          <span class="sr-only">(current)</span></a
+        >
+        <% } %>
+        <!-- <a class="nav-item nav-link" href="/archives/-L2TajOWL1ycB_hwyiK-"
           >心得 <span class="sr-only">(current)</span></a
         >
 
@@ -63,7 +69,7 @@
 
         <a class="nav-item nav-link" href="/archives/-L3VkF87JcRmUUjxhi0g"
           >新聞 <span class="sr-only">(current)</span></a
-        >
+        > -->
       </div>
     </div>
   </nav>
