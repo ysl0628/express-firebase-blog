@@ -34,16 +34,16 @@ app.use(
 
 app.use('/', indexRouter)
 app.use('/auth', authRouter)
-app.use('/dashboard', dashboardRouter)
 
 // check login
-// app.use((req, res, next) => {
-//   if (req.session.uid) {
-//     // 要加 return
-//     return next()
-//   }
-//   res.redirect('/auth')
-// })
+app.use((req, res, next) => {
+  if (req.session.uid) {
+    // 要加 return
+    return next()
+  }
+  res.redirect('/auth/signin')
+})
+app.use('/dashboard', dashboardRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

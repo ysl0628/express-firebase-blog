@@ -8,6 +8,10 @@ const categoriesRef = firebaseAdminDb.ref('categories')
 const articlesRef = firebaseAdminDb.ref('articles')
 
 /* GET article/create listing. */
+router.get('/', function (req, res, next) {
+  res.render('dashboard', { title: 'Express' })
+})
+
 router.get('/article/create', function (req, res, next) {
   categoriesRef.once('value', (snapshot) => {
     const categories = snapshot.val()
