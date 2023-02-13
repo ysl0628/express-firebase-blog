@@ -9,7 +9,7 @@ const articlesRef = firebaseAdminDb.ref('articles')
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  // const id = req.params.id
+  const currentPage = req.query.page || 1
   let categories = {}
   categoriesRef // 使用 promise 而非 callback
     .once('value')
@@ -18,17 +18,42 @@ router.get('/', function (req, res, next) {
       return articlesRef.orderByChild('update_time').once('value')
     })
     .then((snapshot) => {
-      let article = []
+      let articles = []
       snapshot.forEach((child) => {
         if ('public' === child.val().status) {
-          article.push(child.val())
+          articles.push(child.val())
         }
       })
-      article.reverse()
+      articles.reverse()
+
+      // pagination
+      const totalCount = articles.length
+      const pageLimit = 3
+      const pages = Math.ceil(totalCount / pageLimit) // 總頁數
+
+      const minItem = currentPage * pageLimit - pageLimit + 1
+      const maxItem = currentPage * pageLimit
+      const data = []
+      articles.forEach((item, i) => {
+        let itemNum = i + 1
+        if (itemNum >= minItem && itemNum <= maxItem) {
+          data.push(item)
+        }
+      })
+
+      const pagination = {
+        totalCount,
+        currentPage: currentPage > pages ? pages : currentPage,
+        pages,
+        hasPre: currentPage > 1,
+        hasNext: currentPage < pages,
+      }
+
       res.render('index', {
         title: '文章列表',
         dayjs,
-        article,
+        article: data,
+        pagination,
         striptags,
         categories,
       })

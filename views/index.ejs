@@ -26,3 +26,29 @@
     <% } %>
   </div>
 </div>
+
+<nav class="my-5" aria-label="Page navigation example">
+  <ul class="pagination justify-content-center">
+    <li class="page-item <%= !pagination.hasPre && 'disabled' %>">
+      <a
+        class="page-link"
+        href="/?page=<%=pagination.currentPage-1%>"
+        tabindex="-1"
+        >Previous</a
+      >
+    </li>
+    <% for( let index = 1; index < pagination.pages + 1; index++ ) { %>
+    <li
+      class="page-item <%= index === Number(pagination.currentPage) && 'active' %>"
+    >
+      <a class="page-link" href="/?page=<%=index%>"> <%=index%> </a>
+    </li>
+    <% } %>
+
+    <li class="page-item <%= !pagination.hasNext && 'disabled' %>">
+      <a class="page-link" href="/?page=<%=Number(pagination.currentPage)+1%>"
+        >Next</a
+      >
+    </li>
+  </ul>
+</nav>
