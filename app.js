@@ -5,6 +5,7 @@ const express = require('express')
 const session = require('express-session')
 const createError = require('http-errors')
 const cookieParser = require('cookie-parser')
+require('dotenv').config()
 
 const authRouter = require('./routes/auth')
 const indexRouter = require('./routes/index')
@@ -31,19 +32,25 @@ app.use(
     cookie: { maxAge: 60000 },
   })
 )
-
-app.use('/', indexRouter)
-app.use('/auth', authRouter)
+// 以 middleware 檢查是否登入
+const globalLocals = (req, res, next) => {
+  res.locals.user = req.session.uid || null
+  next()
+}
 
 // check login
-app.use((req, res, next) => {
-  if (req.session.uid) {
+const authCheck = (req, res, next) => {
+  if (req.session.uid === process.env.ADMIN_USER) {
     // 要加 return
     return next()
   }
   res.redirect('/auth/signin')
-})
-app.use('/dashboard', dashboardRouter)
+}
+
+app.use('/', globalLocals, indexRouter)
+app.use('/auth', authRouter)
+
+app.use('/dashboard', authCheck, dashboardRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -3,6 +3,7 @@ const firebaseAdminDb = require('../connection/firebase-admin')
 const express = require('express')
 const router = express.Router()
 const firebaseAuth = firebaseDb.auth()
+require('dotenv').config()
 
 router.get('/signup', (req, res) => {
   const error = req.flash('error')
@@ -14,6 +15,21 @@ router.get('/signin', function (req, res, next) {
   const error = req.flash('error')
   const hasError = error.length > 0
   res.render('dashboard/signin', { error, hasError })
+})
+
+router.get('/signout', (req, res) => {
+  firebaseAuth
+    .signOut()
+    .then((user) => {
+      // 建立登入權限
+      req.session.uid = null
+      res.redirect('/auth/signin')
+    })
+    .catch((error) => {
+      const errorMessage = error.message
+      req.flash('error', errorMessage)
+      res.redirect('/auth/signin')
+    })
 })
 
 router.post('/signup', (req, res, next) => {
@@ -51,13 +67,15 @@ router.post('/signin', (req, res) => {
     .signInWithEmailAndPassword(email, password)
     .then((user) => {
       // 建立登入權限
+      if (user.user.uid !== process.env.ADMIN_USER) {
+        req.flash('error', '權限不足，請與管理員聯絡')
+        return res.redirect('/auth/signin')
+      }
       req.session.uid = user.user.uid
       res.redirect('/dashboard')
     })
     .catch((error) => {
-      console.log('登入失敗')
       const errorMessage = error.message
-      console.log(errorMessage)
       req.flash('error', errorMessage)
       res.redirect('/auth/signin')
     })
