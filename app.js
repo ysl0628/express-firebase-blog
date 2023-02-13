@@ -6,6 +6,7 @@ const session = require('express-session')
 const createError = require('http-errors')
 const cookieParser = require('cookie-parser')
 
+const authRouter = require('./routes/auth')
 const indexRouter = require('./routes/index')
 const dashboardRouter = require('./routes/dashboard')
 
@@ -32,7 +33,17 @@ app.use(
 )
 
 app.use('/', indexRouter)
+app.use('/auth', authRouter)
 app.use('/dashboard', dashboardRouter)
+
+// check login
+// app.use((req, res, next) => {
+//   if (req.session.uid) {
+//     // 要加 return
+//     return next()
+//   }
+//   res.redirect('/auth')
+// })
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

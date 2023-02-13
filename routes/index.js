@@ -1,8 +1,8 @@
 const dayjs = require('dayjs')
-var express = require('express')
+const express = require('express')
 const striptags = require('striptags')
 const convertPagination = require('../modules/convertPagination')
-var router = express.Router()
+const router = express.Router()
 const firebaseAdminDb = require('../connection/firebase-admin')
 
 const categoriesRef = firebaseAdminDb.ref('categories')

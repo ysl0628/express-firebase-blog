@@ -145,7 +145,4 @@ router.post('/article/delete/:id', (req, res) => {
   res.end()
 })
 
-router.get('/signup', function (req, res, next) {
-  res.render('dashboard/signup', { title: 'Express' })
-})
 module.exports = router
