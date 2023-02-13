@@ -62,7 +62,7 @@ router.get('/post/:id', function (req, res, next) {
 })
 
 router.get('/archives/:path', function (req, res, next) {
-  const path = req.params.path
+  const path = req.params.path || null
   const currentPage = req.query.page || 1
   let categories = {}
   let categoryMapping = {}
@@ -73,10 +73,9 @@ router.get('/archives/:path', function (req, res, next) {
       Object.keys(categories).forEach((id) => {
         categoryMapping[categories[id].path] = id
       })
-      console.log(categoryMapping)
       return articlesRef
         .orderByChild('category')
-        .equalTo(categoryMapping[path])
+        .equalTo(categoryMapping[path] || null)
         .once('value')
     })
     .then((snapshot) => {

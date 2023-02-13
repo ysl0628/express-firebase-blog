@@ -37,7 +37,8 @@ app.use(
   })
 )
 // 以 middleware 檢查是否登入
-const globalLocals = (req, res, next) => {
+const globalLocals = (err, req, res, next) => {
+  console.log('globalLocals')
   res.locals.user = req.session.uid || null
   categoriesRef.once('value', (snapshot) => {
     res.locals.categories = snapshot.val()
@@ -56,12 +57,16 @@ const authCheck = (req, res, next) => {
 
 app.use('/', globalLocals, indexRouter)
 app.use('/auth', authRouter)
-
 app.use('/dashboard', authCheck, dashboardRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  next(createError(404))
+  console.log('here')
+  categoriesRef.once('value', (snapshot) => {
+    res.locals.categories = snapshot.val()
+    createError(404)
+    res.render('error', { title: '您所查看的頁面不存在' })
+  })
 })
 
 // error handler
@@ -72,7 +77,7 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500)
-  res.render('error')
+  res.render('error', { title: '您所查看的頁面不存在' })
 })
 
 module.exports = app
