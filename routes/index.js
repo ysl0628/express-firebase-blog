@@ -1,6 +1,7 @@
 const dayjs = require('dayjs')
 var express = require('express')
 const striptags = require('striptags')
+const convertPagination = require('../modules/convertPagination')
 var router = express.Router()
 const firebaseAdminDb = require('../connection/firebase-admin')
 
@@ -27,27 +28,7 @@ router.get('/', function (req, res, next) {
       articles.reverse()
 
       // pagination
-      const totalCount = articles.length
-      const pageLimit = 3
-      const pages = Math.ceil(totalCount / pageLimit) // 總頁數
-
-      const minItem = currentPage * pageLimit - pageLimit + 1
-      const maxItem = currentPage * pageLimit
-      const data = []
-      articles.forEach((item, i) => {
-        let itemNum = i + 1
-        if (itemNum >= minItem && itemNum <= maxItem) {
-          data.push(item)
-        }
-      })
-
-      const pagination = {
-        totalCount,
-        currentPage: currentPage > pages ? pages : currentPage,
-        pages,
-        hasPre: currentPage > 1,
-        hasNext: currentPage < pages,
-      }
+      const { data, pagination } = convertPagination(articles, currentPage)
 
       res.render('index', {
         title: '文章列表',
