@@ -117,7 +117,7 @@ router.post('/article/create', function (req, res, next) {
     update_time: Date.now().valueOf(),
   }
   articleRef.set(article).then(() => {
-    res.redirect(`/dashboard/article/${key}`)
+    res.redirect(`/dashboard/archives`)
   })
 })
 
@@ -133,7 +133,7 @@ router.post('/article/update/:id', function (req, res, next) {
     .child(id)
     .update(article)
     .then(() => {
-      res.redirect(`/dashboard/article/${id}`)
+      res.redirect(`/dashboard/archives`)
     })
 })
 

@@ -36,7 +36,7 @@
               name="category"
               required
               value="<%= item %>"
-              checked="<%= article.category %>"
+              checked="<%= article.category||false %>"
             />
             <%= categories[item].name %>
           </label>
