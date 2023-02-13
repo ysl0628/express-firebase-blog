@@ -54,7 +54,9 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav ml-auto">
         <% for( let item in categories ) { %>
-        <a class="nav-item nav-link" href="/archives/<%= item %>"
+        <a
+          class="nav-item nav-link"
+          href="/archives/<%= categories[item].path %>"
           ><%= categories[item].name %>
           <span class="sr-only">(current)</span></a
         >

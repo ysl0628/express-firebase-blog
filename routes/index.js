@@ -61,15 +61,23 @@ router.get('/post/:id', function (req, res, next) {
     })
 })
 
-router.get('/archives/:id', function (req, res, next) {
-  const id = req.params.id
+router.get('/archives/:path', function (req, res, next) {
+  const path = req.params.path
   const currentPage = req.query.page || 1
   let categories = {}
+  let categoryMapping = {}
   categoriesRef // 使用 promise 而非 callback
     .once('value')
     .then((snapshot) => {
       categories = snapshot.val()
-      return articlesRef.orderByChild('category').equalTo(id).once('value')
+      Object.keys(categories).forEach((id) => {
+        categoryMapping[categories[id].path] = id
+      })
+      console.log(categoryMapping)
+      return articlesRef
+        .orderByChild('category')
+        .equalTo(categoryMapping[path])
+        .once('value')
     })
     .then((snapshot) => {
       let articles = []
